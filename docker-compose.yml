@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  webapi:
+    build:
+      context: ./Backend/WebApi/Blue.Calculadora.Api  # Certifique-se de ter um Dockerfile na pasta WebApi
+    ports:
+      - "5000:80"  # Mapeia a porta 80 da WebApi para a porta 5000 do host
+    depends_on:
+      - rabbitmq
+      - mysql
+    environment:
+      RabbitMQConfig_HostName: "localhost"  # Nome do serviço RabbitMQ no docker-compose
+      RabbitMQConfig_Port: "5672"
+      RabbitMQConfig_UserName: "guest"
+      RabbitMQConfig_Password: "guest"
+      RabbitMQConfig_VirtualHost: "guest"
+      MySQLConfig_HostName: "localhost"  # Nome do serviço RabbitMQ no docker-compose
+      MySQLConfig_Port: "3306"
+      MySQLConfig_UserName: "admin"
+      MySQLConfig_Password: "admin"
+      MySQLConfig_DataBase: "Calculadora"
+     
+  rabbitmq:
+    image: "rabbitmq:3.9.14-management"
+    ports:
+      - "15672:15672"  # Porta para a interface de gerenciamento do RabbitMQ
+      - "5672:5672"    # Porta para a comunicação AMQP
+
+  mysql:
+    image: "mysql:latest"
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: Calculadora
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    ports:
+      - "3306:3306"  # Porta para a comunicação MySQL
